@@ -82,7 +82,7 @@ tb_tloe2 as (
       state,
       start_time,
       waiting_ms,
-      case when prev_etime is null then waiting_ms else 0 end as target_waiting_ms, 
+      case when prev_etime is null then waiting_ms else null end as target_waiting_ms, 
       prev_elapsed_ms,
       etime,
       ifnull(prev_etime, start_time) as prev_etime,
@@ -183,6 +183,7 @@ tb_stat_by_timebucket as (
 )
 select distinct
   total_slot_ms_bucket[offset(target_slot_ms_bucket)] total_slot_ms_bucket, 
+  percentile_disc(average_waiting_ms, 0.50) over (partition by target_slot_ms_bucket) as waiting_50,
   percentile_disc(average_elapsed_ms, 0.25) over (partition by target_slot_ms_bucket) as elapsed_25,
   percentile_disc(average_elapsed_ms, 0.50) over (partition by target_slot_ms_bucket) as elapsed_50,
   percentile_disc(average_elapsed_ms, 0.75) over (partition by target_slot_ms_bucket) as elapsed_75
