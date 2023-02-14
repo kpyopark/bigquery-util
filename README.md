@@ -6,7 +6,7 @@ The sql script - badquery3 - can help you see the average slot utilization per p
 
 In this script, you MUST modify the following keywords to match your project environment. 
 
-- <<master-project>> in line 175, 177: This value should be the master project id in your organization. All reservations and assignment meta are stored in the master project's information schema in BigQuery. 
+- `<<master-project>>` in line 175, 177: This value MUST be replaced with the master project id in your organization. All reservations and assignment information are stored in the master project's information schema in BigQuery. 
 
 [How to use it ?]
 
