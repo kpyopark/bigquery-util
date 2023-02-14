@@ -1,8 +1,8 @@
 with tb_settings as (
   select
-    current_timestamp() - interval 30 minute as search_start_time,
+    current_timestamp() - interval 7 day as search_start_time,
     current_timestamp() as search_finish_time, 
-    10 as bucket_time ,
+    600 as bucket_time ,
     1000 as search_maximum_bytes_processed,
     10000 as search_maximum_waiting_ms, 
     100 as check_elapsed_ms, 
@@ -162,15 +162,31 @@ tb_stat2 as (
   from 
     tb_stat, tb_settings
   group by 1
+),
+tb_project as (
+  select distinct table_catalog as project_id
+  from `region-asia-northeast3`.INFORMATION_SCHEMA.TABLES
+  limit 1
+),
+tb_capacity as (
+  select 
+    sum(slot_capacity) as sum_slot_capacity
+  from tb_project,
+    `<<master-project>>`.`region-asia-northeast3`.INFORMATION_SCHEMA.ASSIGNMENTS_BY_PROJECT ASSIGNMENT
+    inner join
+    `<<master-project>>`.`region-asia-northeast3`.INFORMATION_SCHEMA.RESERVATIONS_BY_PROJECT RESERVATION
+    on (ASSIGNMENT.reservation_name = reservation.reservation_name)
+  where assignment.assignee_id = tb_project.project_id
+  and job_type = "QUERY"
 )
 select 
   ctime_bucket, 
   tb_stat2.sum_waiting_ms / bucket_time as sum_waiting_ms,
-  sum_average_slot_usage / bucket_time as sum_average_slot_usage,
-  sum_unit_slot_usage / bucket_time as sum_unit_slot_usage,
+  sum_average_slot_usage / bucket_time * 100 / sum_slot_capacity as sum_average_slot_usage,
+  sum_unit_slot_usage / bucket_time * 100 / sum_slot_capcity as sum_unit_slot_usage,
   sum_pending_units / bucket_time as sum_pending_units,
   sum_completed_units / bucket_time as sum_completed_units,
   sum_active_units / bucket_time as sum_active_units
 from 
-  tb_stat2, tb_settings
+  tb_stat2, tb_settings, tb_capacity
 order by 1 asc
