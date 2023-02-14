@@ -1,6 +1,6 @@
 # bigquery-util
 
-## badquery3 
+## [badquery3](badquery3.sql)
 
 The sql script - badquery3 - can help you see the average slot utilization per project. 
 
