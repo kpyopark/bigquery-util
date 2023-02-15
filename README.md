@@ -1,5 +1,21 @@
 # bigquery-util
 
+## [elapsedtime_bytesprocessed](elapsedtime_bytesprocessed.sql)
+
+This query shows the average elapsed_time per bytes_processed.
+
+For example.
+
+| Row	| bucket_bytes_processed | p0_elapsed_time | p25_elapsed_time | p50_elapsed_time | p75_elapsed_time | p100_elapsed_time |
+|-----|------------------------|-----------------|------------------|------------------|------------------|-------------------|
+|1|null|0.0|0.0|0.0|0.0|0.0|
+|2|100000|29.0|58.0|62.0|66.0|754.0|
+|3|1000000|538.0|545.0|594.0|650.0|655.0|
+|4|500000000|162.0|412.0|618.5|777.5|903.0|
+|5|99999999999|602.0|602.0|602.0|602.0|602.0|
+
+
+
 ## [badquery3](badquery3.sql)
 
 The sql script - badquery3 - can help you see the average slot utilization per project. 
