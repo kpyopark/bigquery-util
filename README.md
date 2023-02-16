@@ -14,7 +14,14 @@ For example.
 |4|500000000|162.0|412.0|618.5|777.5|903.0|
 |5|99999999999|602.0|602.0|602.0|602.0|602.0|
 
+## [badquery_monitoring](badquery_monitoring.sql)
 
+This query shows the very resource consuming queries in the job list.
+
+Before to use it, you must change the value of the fields in the CTE table(tb_settings).
+
+- threshold_maximum_slot_ms : This value has very similar feature like the maximum_bytes_billed. It uses total_slot_ms instead of bytes_billed.
+- threshold_elapsed_ms & threshold_average_slot_usage : If a query would consume slots in a certain period time with high average resource, it would be a bad query. 
 
 ## [badquery3](badquery3.sql)
 
