@@ -14,3 +14,13 @@ where _rnk = 1
 select * 
   from most_used_queries join tb_sample_query using(hash_id)
 order by 2 desc
+
+-- If there are few queries in jobs_by view, you can use more concise version of the above query.
+-- with most_used_queries as (
+-- select query_info.query_hashes.normalized_literals as hash_id, count(1) as used_count, sum(total_slot_ms) as total_slot_sum, sum(total_bytes_processed) as total_bytes_sum, array_agg(query order by total_slot_ms desc limit 1)[safe_offset(0)] as query
+--   from `region-asia-northeast3`.INFORMATION_SCHEMA.JOBS_BY_PROJECT
+--  group by query_info.query_hashes.normalized_literals
+-- )
+-- select * 
+--   from most_used_queries
+-- order by 2 desc
