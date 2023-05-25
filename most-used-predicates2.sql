@@ -1,10 +1,10 @@
 with tb_settings as (
-  select cast('2022-11-01' as timestamp) as start_date,
-         cast('2022-11-05' as timestamp) as end_date,
+  select current_timestamp() - interval 60 day as start_date,
+         current_timestamp() as end_date,
 )
 , tb_org as (
   select project_id, user_email, job_id, job_type, total_slot_ms, query, job_stages
-    from `<<project-id>>`.`region-asia-northeast3`.INFORMATION_SCHEMA.JOBS_BY_PROJECT, tb_settings
+    from `region-asia-northeast3`.INFORMATION_SCHEMA.JOBS_BY_PROJECT, tb_settings
    where creation_time between start_date and end_date
 )
 /*
@@ -38,7 +38,7 @@ with tb_settings as (
    where substep like 'FROM %'
 )
 , tb_columns as (
-  select *, split(param, ':')[offset(0)] as key, split(param, ':')[offset(1)] as col
+  select *, split(param, ':')[SAFE_OFFSET(0)] as key, split(param, ':')[SAFE_OFFSET(1)] as col
     from tb_readstep, unnest(split(substep, ',')) param
    where substep like '$%'
 )
@@ -64,4 +64,5 @@ select tt.project_id, tt.user_email, tt.job_id, tt.job_type, tt.total_slot_ms, t
 )
 select table_name, predicate_column, table_used_cnt, predicate_used_cnt, predicate_used_cnt / table_used_cnt as column_used_ratio -- , total_rows, total_partitions, total_logical_bytes, total_physical_bytes
   from tb_table_cnt join tb_column_cnt using (table_name) -- left outer join tb_tab_size using (table_name)
+ where predicate_column is not null
  order by 5,3,4 desc
