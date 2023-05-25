@@ -21,14 +21,14 @@ tb_jobs as (
     statement_type, 
     timeline, 
     total_bytes_processed, 
-    extract(millisecond from (end_time - start_time)) as elapsed_ms
+    timestamp_diff(end_time, start_time, millisecond) as elapsed_ms
   from 
     `region-asia-northeast3`.INFORMATION_SCHEMA.JOBS_BY_PROJECT, tb_settings
   where
     1=1
     and creation_time between search_start_time and search_finish_time
     and state in unnest(check_state)
-    and extract(millisecond from (end_time - start_time)) > threshold_elapsed_ms
+    and timestamp_diff(end_time, start_time, millisecond) > threshold_elapsed_ms
 ), 
 tb_tlo as (
   select 
